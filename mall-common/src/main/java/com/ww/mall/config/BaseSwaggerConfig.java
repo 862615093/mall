@@ -1,4 +1,4 @@
-package com.ww.mall.common;
+package com.ww.mall.config;
 
 import com.ww.mall.domain.SwaggerProperties;
 import org.springframework.beans.BeansException;

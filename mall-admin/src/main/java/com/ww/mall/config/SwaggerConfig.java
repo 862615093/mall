@@ -1,6 +1,5 @@
 package com.ww.mall.config;
 
-import com.ww.mall.common.BaseSwaggerConfig;
 import com.ww.mall.domain.SwaggerProperties;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.context.annotation.Bean;
