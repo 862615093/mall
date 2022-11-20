@@ -1,5 +1,6 @@
 package com.ww.mall.config;
 
+import com.ww.mall.component.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -20,6 +21,20 @@ public class SecurityConfig {
 
     @Autowired
     private IgnoreUrlsConfig ignoreUrlsConfig;
+
+    @Autowired
+    private RestfulAccessDeniedHandler restfulAccessDeniedHandler;
+    @Autowired
+    private RestAuthenticationEntryPoint restAuthenticationEntryPoint;
+
+    @Autowired
+    private JwtAuthenticationTokenFilter jwtAuthenticationTokenFilter;
+
+    @Autowired(required = false)
+    private DynamicSecurityService dynamicSecurityService;
+
+    @Autowired(required = false)
+    private DynamicSecurityFilter dynamicSecurityFilter;
 
     @Bean
     SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
@@ -42,19 +57,20 @@ public class SecurityConfig {
                 .csrf()
                 .disable()
                 .sessionManagement()
-                .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
 //                // 自定义权限拒绝处理类
-//                .and()
-//                .exceptionHandling()
-//                .accessDeniedHandler(restfulAccessDeniedHandler)
-//                .authenticationEntryPoint(restAuthenticationEntryPoint)
+                .and()
+                .exceptionHandling()
+                .accessDeniedHandler(restfulAccessDeniedHandler)
+                .authenticationEntryPoint(restAuthenticationEntryPoint)
 //                // 自定义权限拦截器JWT过滤器
-//                .and()
-//                .addFilterBefore(jwtAuthenticationTokenFilter, UsernamePasswordAuthenticationFilter.class);
+                .and()
+                .addFilterBefore(jwtAuthenticationTokenFilter, UsernamePasswordAuthenticationFilter.class);
 //        //有动态权限配置时添加动态权限校验过滤器
-//        if(dynamicSecurityService!=null){
-//            registry.and().addFilterBefore(dynamicSecurityFilter, FilterSecurityInterceptor.class);
-//        }
+        if (dynamicSecurityService != null) {
+            registry.and()
+                    .addFilterBefore(dynamicSecurityFilter, FilterSecurityInterceptor.class);
+        }
         return httpSecurity.build();
     }
 }
